@@ -1,3 +1,7 @@
+/*
+    require() : 모듈을 import 하겠다.
+    express() : Creates an Express application.
+*/
 const express = require('express') // npm install express --save
 const app = express()
 /*
@@ -5,13 +9,16 @@ const app = express()
     터미널에 node main.js로 서버를 열면,
     브라우저에서 localhost:3000 으로 접속 가능.
 */
-app.listen(3000, ()=>{
+app.listen(3000, () => {
     console.log('3000번에 귀를 대고 듣기 시작했음.')
 })
 
 /*
     처리해주는 루틴들을 추가...
     app.get('목적지 폴더', call back 함수(request, response))  : client가 server에 get 요청 했을 때 처리해주는 명령어.
+    request  : WB -> WS
+    response : WS -> WB 
+
     app.post() : client가 server에  
 
     locathost:3000/about
@@ -36,13 +43,13 @@ app.get('/', (req, res) => {
     res.sendFile(__dirname + '/pages/index.html')
 })
 
-app.get('/about', (req,res) => {
+app.get('/about', (req, res) => {
     console.log(' ===> about에 대한 요청 들어왔음.')
     // res.send('about에 대한 요청')
     res.sendFile(__dirname + '/pages/about.html')
 })
 
-app.get('/working', (req,res) => {
+app.get('/working', (req, res) => {
     console.log(' ===> working에 대한 요청 들어왔음.')
     res.sendFile(__dirname + '/pages/working.html')
 })

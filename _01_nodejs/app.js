@@ -42,7 +42,8 @@
 // }, 3000)
 
 /* 
-    Module. logger.js --> showLogMessage
+    Module 함수. 라이브러리
+    logger.js --> showLogMessage
 */
 
 const logger = require('./logger.js')   // logger.js 모듈을 불러온다.

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Sign up 페이지 (feat. MariaDB, Nodejs)</title>
+</head>
+
+<body>
+    <h1>사용자 등록 페이지</h1>
+    <br>
+    <table>
+        <!-- 
+            서버로 전송되는 value : input text에 입력된 문자열 
+            서버로 전송되는 key   : name ( id, age... )
+            
+            key를 확인하고, value를 처리한다.
+        -->
+
+        <!--
+            입력한 걸 서버로 전송하려면, form으로 만들어야 한다.
+
+            form : 서버에게 http request를 보낼 수 있는 태그.
+                -> get, post : 서버에게 요청을 보내는 명령어.
+                    아래에서는 요청을 보낼 method로 post를 쓰도록 지정했다.
+
+                -> get vs post
+                    get으로 보낼 때는 데이터가 겉으로 다 보인다.
+                    하지만, post로 보내면 데이터가 겉으로 드러나지 않는다.
+
+                -> action : 누구한테 보낼 지 지정.
+        -->
+        <form method="post" action="/process/adduser">
+            <table>
+                <tr>
+                    <td><label>아이디</label></td>
+                    <td><input type="text" name="id"></td>
+                </tr>
+                <tr>
+                    <td><label>사용자명</label></td>
+                    <td><input type="text" name="name"></td>
+                </tr>
+                <tr>
+                    <td><label>나이</label></td>
+                    <td><input type="text" name="age"></td>
+                </tr>
+                <tr>
+                    <!-- input type을 password로 주게 되면, 입력 문자가 가려진다. -->
+                    <td><label>패스워드</label></td>
+                    <td><input type="password" name="password"></td>
+                </tr>
+            </table>
+            <input type="submit" value="회원가입">
+        </form>
+</body>
+
+</html>
