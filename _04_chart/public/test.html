@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+
+<body>
+    <canvas id="myChart" width="400" height="320"></canvas>
+</body>
+<script>
+    const labels = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'June']
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'My First dataset',
+            borderColor: 'rgb(255,99,132)',
+            data: [0, 10, 5, 2, 20, 30]
+        }]
+    }
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            responsive: true, // 화면 크기 변동 반응
+            maintainAspectRatio: false //  좀 더 자유롭게 그림
+        }
+    }
+    const myChar = new Chart(document.getElementById('myChart'), config);
+</script>
+
+</html>

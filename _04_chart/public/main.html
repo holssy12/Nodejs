@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <canvas id="myChart" width="400" height="320"></canvas>
+    </div>
+    <div>
+        <button id="chartdatafromdb">그래프그리기</button>
+    </div>
+</body>
+
+<script>
+
+    const btn = document.getElementById('chartdatafromdb')
+    btn.addEventListener('click', () => {
+        // 서버에 데이터를 요청하고, 데이터를 받아서 그래프틀 그린다.
+        chartDataFromDB()
+    })
+
+    const chartDataFromDB = () => {
+        // 서버에 데이터 요청
+        fetch('/chartdatafromdb', {
+            method: 'post',
+            headers: {
+                'content-type': 'application/json'
+            }
+        }).then((res) => res.json()) // 서버로부터 답장(response)이 온 경우, response를 json으로 parsing해서 꺼낸다.
+            .then((res) => { // parsing된 데이터를 처리한다.
+
+                // 받아온 데이터(res)를 가지고, 그래프를 그린다.
+
+                if (res.result != 'ok') { // 서버로부터 받은 응답이 ok가 아니면, return시킨다.
+                    console.log('result is not ok')
+                    return;
+                }
+
+                let reg_date_obj = []   // x축
+                let temp_obj = []       // y축
+
+                // 그래프를 그리기 위해, reg_date_obj와 temp_obj를 만든다.
+                for (let i = 0; i < res.temp.length; i++) {
+                    reg_date_obj.push(res.reg_date[i])
+                    temp_obj.push(res.temp[i])
+                }
+
+                // 그래프를 그리기 위한 준비
+                const data = {
+                    labels: reg_date_obj,
+                    datasets: [{
+                        label: '온도',
+                        borderColor: 'rgb(255,99,132)',
+                        data: temp_obj
+                    }]
+                }
+
+                const config = {
+                    type: 'line',
+                    data: data,
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false
+                    }
+                }
+
+                // 진짜로 그래프 그리기
+                const myChart = new Chart(document.getElementById('myChart'), config)
+
+            })
+
+    }
+
+</script>
+
+</html>

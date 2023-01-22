@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- min.js : 주석이나 공백을 제거하고 파일을 받아와, 로딩 속도를 올린다. -->
+    <script src="https://unpkg.com/fabric@4.6.0/dist/fabric.min.js"></script>
+
+    <title>Fabricjs 테스트</title>
+</head>
+
+<body>
+    <div>
+        <canvas id="c" width="500" height="500" tabindex="1"></canvas>
+    </div>
+    <div>
+        <button id="savebtn">저장하기</button>
+    </div>
+    <script>
+
+        const canvas = new fabric.Canvas('c')
+
+        // const rect = new fabric.Rect({
+        //     left: 100,
+        //     top: 100,
+        //     width: 20,
+        //     height: 20,
+        //     fill: 'red'
+        // })
+
+        // const rect2 = new fabric.Rect({
+        //     left: 300,
+        //     top: 300,
+        //     width: 20,
+        //     height: 20,
+        //     fill: 'blue'
+        // })
+
+        // canvas.add(rect)
+        // canvas.add(rect2)
+
+        // 이미지를 불러서 background로 설정
+        fabric.Image.fromURL('dog.jpg', (img) => {
+            canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
+                scaleX: canvas.width / img.width,
+                scaleY: canvas.height / img.height
+            })
+        })
+
+        // 마우스가 눌렸는지 추적하는 변수
+        let isDown = false;
+        let ox, oy
+        let rect
+
+        // 마우스가 click 되었을 때 event 처리
+        canvas.on('mouse:down', (o) => {
+
+            // 마우스가 눌린 곳에 다른 객체가 있는 경우.
+            if (o.target) return
+
+            isDown = true
+
+            const pointer = canvas.getPointer(o.e)
+            ox = pointer.x
+            oy = pointer.y
+
+            rect = new fabric.Rect({
+                originX: 'left',
+                originY: 'top',
+                left: ox,
+                top: oy,
+                width: pointer.x - ox,
+                height: pointer.y - oy,
+                angle: 0,
+                fill: 'rgba(255,0,0,0.5)',
+                transparentCorners: false
+            })
+            rect.setControlsVisibility({ mtr: false }) // 사각형 회전에 대한 control을 보이지 않도록 설정.
+            canvas.add(rect)
+
+        })
+
+        // 마우스가 움직일 때 event 처리
+        canvas.on('mouse:move', (o) => {
+
+            if (!isDown) return;
+
+            // drag 상태일 때만, 사각형 크기 조절
+            const pointer = canvas.getPointer(o.e)
+
+            if (ox > pointer.x) {
+                rect.set({
+                    left: pointer.x
+                })
+            }
+
+            if (oy > pointer.y) {
+                rect.set({
+                    top: pointer.y
+                })
+            }
+
+            rect.set({
+                width: Math.abs(ox - pointer.x),
+                height: Math.abs(oy - pointer.y)
+            })
+
+            canvas.renderAll();
+
+        })
+
+        // 마우스가 unclick 되었을 때 event 처리
+        canvas.on('mouse:up', (o) => {
+
+            // 너무 작은 사각형은 그려지지 않도록 한다.
+            if (rect) {
+                if (rect.width < 10 || rect.height < 10) {
+                    canvas.remove(rect)
+                }
+            }
+            isDown = false
+
+            rect = undefined
+        })
+
+        document.onkeydown = (e) => {
+            switch (e.keyCode) {
+                case 8: // backspace
+                    canvas.remove(canvas.getActiveObject()) // 선택된 도형 삭제
+                    break
+            }
+            canvas.renderAll()
+        }
+
+        document.getElementById('savebtn').addEventListener('click', () => {
+            const objects = canvas.getObjects('rect')
+            objects.forEach((object) => {
+                console.log(`BBOX 정보: ${Object.keys(object)}`)
+                console.log(`left: ${object.left} top: ${object.top} width: ${object.width} height: ${object.height}`)
+            })
+        })
+
+    </script>
+</body>
+
+</html>

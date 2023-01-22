@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Canvas Image DB Node</title>
+</head>
+
+<body>
+    <div>
+        <canvas id="my_canvas" width="1200" height="800"></canvas>
+    </div>
+</body>
+
+<script>
+    const my_canvas = document.getElementById('my_canvas')
+    const ctx = my_canvas.getContext('2d')
+
+    const response = fetch('/getimgfromdb', {
+        method: 'post',
+        headers: {
+            'content-type': 'application/json'
+        }
+    }).then((res) => res.json())
+        .then(async (res) => {
+            // 받은 res의 result 안에 rows가 있다.
+            // 그 rows들 중에 첫 번째 요소만 사용하는데,
+            // img column 데이터만 뽑는다.
+            // 근데, img는 binary data이기 때문에, img 안의 data만 뽑아온다.
+            //
+            // 그 후, 각 요소는 1 byte의 양수 값을 가지므로 (0~255)
+            // 1차원 배열인 Uint8Array로 바꿔준다.
+            const binary = new Uint8Array(res['result'][0]['img']['data'])
+
+            // raw data인 binary를 jpeg 타입으로 바꾼다. ( JS에서 지원하는 기능 )
+            const blob = new Blob([binary], { tpye: 'image/jpeg' })
+
+            // blob의 압축을 풀어서 실제 이미지로 변환한다.
+            const kimg = new Image()
+            kimg.src = URL.createObjectURL(blob)
+            const imgLoadingDone = await kimg.decode(); // 변환이 완료 될 때까지 기다린다.
+
+            // 이미지를 그린다.
+            ctx.drawImage(kimg, 0, 0)
+
+        })
+
+    ctx.fillStyle = 'blue'
+    ctx.fillRect(10, 10, 490, 490)
+</script>
+
+</html>
